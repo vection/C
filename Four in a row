@@ -1,5 +1,5 @@
 /**
- * Program: Game- Four in a row written in C. [stack implement was taken by geeksforgeeks]
+ * Program: Game- Four in a row written in C. wrriten by Aviv harazi. [stack implement was taken by geeksforgeeks]
  */
 
 
@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <sys/queue.h>
-#include "matala3.h"
+//#include "matala3.h"
 
 #include <limits.h>
 
@@ -215,7 +215,18 @@ void Reverse(int mat[6][7], struct Stack* stack) {
     
 }
 
-
+bool Checkfull (int mat[6][7]) {
+    int j, counter = 0;
+    for(j = 0; j<7; j++) {
+        if(mat[0][j] > 0) {
+            counter++;
+        }
+    }
+    if(counter == 7) {
+        return 1;
+    }
+    return 0;
+}
 // O turn function
 void Oturn(int mat[6][7], struct Stack* stack) { // O turn
      int turn,i;
@@ -223,6 +234,10 @@ void Oturn(int mat[6][7], struct Stack* stack) { // O turn
     scanf("%d", &turn);
     if(turn == 0) {
         Reverse(mat, stack);
+    }
+    if(mat[0][turn-1] > 0) {
+            printf("Colum is full!\n");
+            Oturn(mat, stack);
     }
     else if(turn > 0 && turn < 8) {
         turn = turn-1;
@@ -236,10 +251,6 @@ void Oturn(int mat[6][7], struct Stack* stack) { // O turn
         PrintBoard(mat);
         
     }
-    else if(mat[0][turn] != 0) {
-            printf("Colum is full!\n");
-            Xturn(mat, stack);
-    }
     else {
         printf("Wrong input\n");
     }
@@ -251,6 +262,10 @@ void Xturn(int mat[6][7], struct Stack* stack) {
     scanf("%d", &turn);
     if(turn == 0) {
         Reverse(mat, stack);
+    }
+    if(mat[0][turn-1] > 0) {
+            printf("Colum is full!\n");
+            Xturn(mat, stack);
     }
     else if(turn > 0 && turn < 8) {
         turn = turn-1;
@@ -264,10 +279,6 @@ void Xturn(int mat[6][7], struct Stack* stack) {
         PrintBoard(mat);
         
     }
-    else if(mat[0][turn] != 0) {
-            printf("Colum is full!\n");
-            Xturn(mat, stack);
-    }
     else {
         printf("Wrong number\n");
     }
@@ -278,17 +289,21 @@ void Xturn(int mat[6][7], struct Stack* stack) {
 void Play(int mat[6][7]) {
     struct Stack* stack = createStack(100);
     int winner;
+    bool full = 0;
     do {
         Xturn(mat, stack);
         winner = Checkwin(mat);
-        if(winner != 0) { break; }
+        full = Checkfull(mat);
+        if(winner != 0 || full == 1) { break; }
         Oturn(mat, stack);
         winner = Checkwin(mat);
-        if(winner != 0) { break; }
+        full = Checkfull(mat);
+        if(winner != 0 || full == 1) { break; }
        
-    } while( winner == 0);
+    } while( winner == 0 && full == 0);
     if(winner == 1) { printf("Player X in the winner!!"); }
     else if(winner == 2) { printf("Player O is the winner!!"); }
+    if(full == 1) { printf("Its a tie."); }
 }
 
 
