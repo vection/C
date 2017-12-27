@@ -1,0 +1,115 @@
+/**
+ * Program: finding all words that can be created from specific given matrix.
+ * Rules: once you add letter you can't repeat it(can't going back).
+ */
+
+
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include "matala2.h"
+
+
+// Counts how many words.
+int count() 
+{
+    static int counter = 0;
+    counter++;
+    return counter;
+}
+
+// Starting function. every letter has been checked here.
+void check(char mat[4][4]) {
+    int i,j;
+    int counter=0;
+    for(i=0; i<4; i++) {
+        for(j =0; j<4; j++) {
+            char str[12] = "";
+            //append(str, mat[i][j]);
+            bool checker[4][4]={{false}};
+            //printf("mat[%d][%d]: %s\n", i, j, str);
+            checkword(mat,i,j, str, checker);
+            counter++;
+             fflush(stdout);
+        }
+    }
+}
+// function to add character to array (represent string)
+void append(char* s, char c)
+{
+        int len = strlen(s);
+        s[len] = c;
+        s[len+1] = '\0';
+}
+// recursive funtion - adding char everytime and check if it is word.
+void checkword(char mat[4][4], int i, int j, char word[], bool checker[4][4]) 
+{
+  if(i >= 0 && i<4 && j >= 0 && j < 4) 
+  {
+      if(!checker[i][j])
+      {
+        checker[i][j] = true; // mark as seen.
+        append(word, mat[i][j]); // adding letter
+        if (isWord(word)) // checking if its vaild word
+        {
+             printf("Found word: %s\n", word);
+             count();
+        }
+        // Continuting with recursion.     
+        checkword(mat, i+1, j, word, checker); 
+        checkword(mat, i, j+1, word, checker);
+        checkword(mat, i, j-1, word, checker);
+        checkword(mat, i-1, j, word, checker);
+        checkword(mat, i+1, j+1, word, checker);
+        checkword(mat, i-1, j-1, word, checker);
+        checker[i][j]=false; // clear path for other paths
+        shortenByOne(word);    
+      }
+      
+ }
+}
+
+// Taking down the '\0' after recursion.
+void shortenByOne(char* s)
+{
+        int len = strlen(s);
+        if(len==0) return;
+        s[len-1] = '\0';
+}
+
+// Given funtion - checking if it vaild word.
+bool isWord(char* s) {
+		return (!strcmp(s,"CAT") |
+			!strcmp(s,"CATS") |
+			!strcmp(s,"TRAM") |
+			!strcmp(s,"TRAMS") |
+			!strcmp(s,"TAME") |
+			!strcmp(s,"CAR") |
+			!strcmp(s,"CARS") |
+			!strcmp(s,"RAT") |
+			!strcmp(s,"RATS") |
+			!strcmp(s,"RAMP") |
+			!strcmp(s,"ART") |
+			!strcmp(s,"CART") |
+			!strcmp(s,"STAMP") |
+			!strcmp(s,"TAKEN") |
+			!strcmp(s,"MEN") |
+			!strcmp(s,"MAKE") |
+			!strcmp(s,"TAKE") |
+			!strcmp(s,"ATE") |
+			!strcmp(s,"SELL") |
+			!strcmp(s,"MATE") |
+			!strcmp(s,"LET") |
+			!strcmp(s,"ACE") |
+			!strcmp(s,"TRACE") |
+			!strcmp(s,"STEEL") |
+			!strcmp(s,"RAKE") );
+}
+
+
+// MAIN
+int main() {
+    char mat[4][4] = { {'C','A','R','T'}, {'E', 'T', 'A', 'K'}, {'E','S','M','E'}, {'L', 'L', 'P', 'N'} };
+   check(mat);
+   printf("There are: %d words\n", count()-5); // Minus 5 because of duplicates.
+}
